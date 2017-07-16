@@ -282,6 +282,7 @@
 <usa-state-list required="boolean value"></usa-state-list>
 -->
 
+    <!--
 <base href="https://raw-dot-custom-elements.appspot.com/Zecat/google-recaptcha/v0.2.1/google-recaptcha/">
 <script src="../webcomponentsjs/webcomponents-lite.js"></script>
 <link rel="import" href="google-recaptcha.html">
@@ -295,7 +296,8 @@
     ></google-recaptcha>
     <span>[[token]]</span>
   </template>
-</dom-bind>
+    </dom-bind>
+-->
 
 
     <!--
@@ -315,7 +317,7 @@
     /script>
 -->
 
-<!--
+    <!--
     <base href="https://raw-dot-custom-elements.appspot.com/">
 <script src="felixzapata/polymer-openajax-datepicker/0.2.2/webcomponentsjs/webcomponents-lite.js"></script>
 <link rel="import" href="felixzapata/polymer-openajax-datepicker/0.2.2/polymer-openajax-datepicker/polymer-openajax-datepicker.html">
@@ -327,7 +329,209 @@
 -->
 
 
+    <!--
+<base href="https://raw-dot-custom-elements.appspot.com/vaadin/vaadin-text-field/v1.1.0-alpha2/vaadin-text-field/">
+<script src="../webcomponentsjs/webcomponents-lite.js"></script>
+<link rel="import" href="vaadin-text-field.html">
+<vaadin-text-field>
+    ...
+</vaadin-text-field>
+-->
+
+    <!--
+    <base href="https://raw-dot-custom-elements.appspot.com/Juicy/juicy-markdown-editor/1.0.1/juicy-markdown-editor/">
+    <script src="../webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="juicy-markdown-editor.html">
+    <juicy-markdown value="# Markdown here"></juicy-markdown>
+    <juicy-markdown value="# <juicy-markdown>
+
+> Polymer Element with GitHub Flavored Markdown (GFM) viewer
+
+## Demo: ...
+"></juicy-markdown>
+-->
+
+    <!--
+    <base href="https://raw-dot-custom-elements.appspot.com/a1626/image-carousel/v1.0.6/image-carousel/">
+    <script src="../webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="image-carousel.html">
+    <image-carousel>
+        <template is="dom-repeat" items='["https://c2.staticflickr.com/2/1217/4607963354_e1a8fea210_z.jpg", "https://cs1.livemaster.ru/storage/e6/45/00b119c13ed9f8b4dc6363a60d--materialy-dlya-tvorchestva-nabor-dlya-vyshivki-biserom-belyj-ti.jpg", "https://tse4.mm.bing.net/th?id=ORT.TH_470633631&pid=1.12&eid=G.470633631"]' slot="images">
+    <img src="[[item]]" width="100px" height="350px">
+  </template>
+    </image-carousel>
+-->
+
+    <!--
+    <base href="https://raw-dot-custom-elements.appspot.com/AqoviaElements/properties-from-ancestor-behavior/v1.1.0/properties-from-ancestor-behavior/">
+<script src="../webcomponentsjs/webcomponents-lite.js"></script>
+<link rel="import" href="./demo/example-ancestor-component.html">
+<link rel="import" href="./demo/example-descendant-component.html">
+<style>
+    papyrus-details {
+        font-family: Roboto;
+        background-color: #ddd;
+        padding: 1em;
+        border-radius: 4px;
+    }
+    
+    summary {
+        font-size: 120%;
+        font-weight: bold;
+    }
+</style>
+<example-ancestor-component my-prop1="Initial Value" my-prop2="Initial Value">
+    <div>
+        <example-descendant-component></example-descendant-component>
+    </div>
+    <div>
+        <example-descendant-component></example-descendant-component>
+    </div>
+    </example-ancestor-component>
+-->
+
+    <!--
+    <base href="https://raw-dot-custom-elements.appspot.com/bahrus/xtal-in/0.0.0/xtal-in/">
+    <script src="../webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="xtal-in.html">
+    <custom-style>
+        <style is="custom-style" include="demo-pages-shared-styles">
 
 
+        </style>
+    </custom-style>
+    <xtal-in>What happened?</xtal-in>
+    <xtal-in when-click dispatch type-arg="hello" bubbles composed>
+        <button>Click to dispatch custom event</button>
+    </xtal-in>
+    <script>
+        document.body.addEventListener('hello', e => {
+            alert('received hello message');
+        })
+
+    </script>
+-->
+
+    <!--
+    <base href="https://raw-dot-custom-elements.appspot.com/ryanburns23/list-item/v2.0.0/list-item/">
+    <script src="../webcomponentsjs/webcomponents-loader.js"></script>
+    <link rel="import" href="list-item.html">
+    <list-item headline="<list-item>" text="ES6 Polymer 2 list item with a skeleton loader">
+    </list-item>
+
+    <list-item loading>
+        Slotted Content also works... Remove the loading attribute to reveal this text
+    </list-item>
+-->
+
+    <!--
+    <base href="https://raw-dot-custom-elements.appspot.com/daKmoR/grain-masonry/v0.8.2/grain-masonry/">
+<script src="../webcomponentsjs/webcomponents-lite.js"></script>
+<link rel="import" href="grain-masonry.html">
+<grain-masonry transition-duration="250">
+    <article style="height: 30px;">Power</article>
+    <article style="height: 50px;">To</article>
+    <article style="height: 25px;">The</article>
+    <article style="height: 35px;">People</article>
+    <article style="height: 40px;">!</article>
+</grain-masonry>
+<style>
+    article {
+        background: #36abcc;
+        width: 29%;
+        margin: 2%;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    </style>
+-->
+
+    <!--
+    <base href="https://raw-dot-custom-elements.appspot.com/Collaborne/paper-password-input/2.1.0/paper-password-input/">
+<script src="../webcomponentsjs/webcomponents-lite.js"></script>
+<link rel="import" href="paper-password-input.html">
+<link rel="import" href="min-length-validator.html">
+<min-length-validator id="min-length-validator" min-length="6"></min-length-validator>
+<paper-password-input auto-validate validator="min-length-validator" error-message="Enter at least 6 characters">
+    </paper-password-input>
+-->
+
+    <!--
+    <base href="https://raw-dot-custom-elements.appspot.com/vaadin/vaadin-split-layout/v2.0.0/vaadin-split-layout/">
+<style>
+    vaadin-split-layout {
+        height: 200px;
+    }
+    
+    vaadin-split-layout>div {
+        font-family: sans-serif;
+        background: #e0e0e0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+</style>
+<script src="../webcomponentsjs/webcomponents-lite.js"></script>
+<link rel="import" href="vaadin-split-layout.html">
+<vaadin-split-layout>
+    <vaadin-split-layout vertical>
+        <div>First layout content</div>
+        <div>Second layout content</div>
+    </vaadin-split-layout>
+    <vaadin-split-layout vertical>
+        <div>Third layout content</div>
+        <div>Fourth layout content</div>
+    </vaadin-split-layout>
+</vaadin-split-layout>
+-->
+
+    <!--
+    <base href="https://raw-dot-custom-elements.appspot.com/vaadin/vaadin-context-menu/v2.0.0/vaadin-context-menu/">
+    <style>
+        vaadin-context-menu {
+            font-family: sans-serif;
+        }
+
+    </style>
+    <script src="../webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="../paper-menu/paper-menu.html">
+    <link rel="import" href="../paper-item/paper-item.html">
+    <link rel="import" href="vaadin-context-menu.html">
+    <vaadin-context-menu>
+        <template>
+    <paper-menu>
+      <paper-item>First menu item</paper-item>
+      <paper-item>Second menu item</paper-item>
+    </paper-menu>
+  </template>
+
+        <p>This paragraph has the context menu provided in the above template.</p>
+        <p>Another paragraph with the context menu.</p>
+    </vaadin-context-menu>
+-->
+
+<!--
+    <base href="https://raw-dot-custom-elements.appspot.com/bahrus/xtal-json-editor/0.0.2/xtal-json-editor/">
+<script src="../webcomponentsjs/webcomponents-lite.js"></script>
+<link rel="import" href="xtal-json-editor.html">
+<link rel="import" href="../polymer/lib/elements/dom-bind.html">
+<dom-bind>
+    <template>
+        <xtal-json-editor watch="[[objectToEdit]]"></xtal-json-editor>
+    </template>
+</dom-bind>
+<script>
+    document.querySelector('dom-bind').objectToEdit = {
+        hello: 'world',
+        name: 'binh',
+        age: 17
+    };
+
+    <
+    /script>
+-->
 
 </head>
