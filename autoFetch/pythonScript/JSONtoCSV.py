@@ -1,3 +1,5 @@
+#How to use: Run with python3, input the JSON folder into the 2nd argument
+
 import pandas as pd
 import os
 import errno
@@ -25,5 +27,6 @@ for file in glob.glob(sys.argv[1] + "*.json"):
     # Get filename without extension
     # fileName = os.path.splitext(os.path.basename(file))[0]
 
-frame.to_csv('%sallElements_%s.csv' % (directoryPath, today), index=False, columns=[
+# Change index=True to get index column at beginning
+frame.to_csv('%sallElements_%s.csv' % (directoryPath, today), index=True, columns=[
     'repo', 'description', 'owner', 'version', 'wc_url', 'updated_at', 'stars', 'forks', 'screenshot_url', 'samplecode_url', 'supported_browsers', 'rating', 'comment', 'external', 'status'])

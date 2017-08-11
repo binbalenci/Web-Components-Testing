@@ -1,3 +1,5 @@
+# How to use: Just run the file
+
 # python2
 import urllib
 import json
@@ -49,7 +51,8 @@ for counter in range(1, timeOfLoop + 1):
     # Get value of cursor for the loading of next JSON
     nextCursor = data["cursor"]
 
-    # Name the file with numering start from 01 and following but first element to last element
+    # Name the file with numering start from 01 and following but first
+    # element to last element
     JSONFilePath = directoryPath + "%02d_%s->%s.json" % (
         counter, data["results"][0]["repo"], data["results"][numberOfElements - 1]["repo"])
 
