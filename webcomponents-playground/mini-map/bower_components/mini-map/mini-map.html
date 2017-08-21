@@ -1,0 +1,339 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../google-map/google-map.html">
+<link rel="import" href="../google-map/google-map-marker.html">
+<link rel="import" href="../google-map/google-map-directions.html">
+<link rel="import" href="../resize-aware/resize-aware.html">
+<link rel="import" href="../text-toggle/text-toggle.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="../iron-collapse-button/iron-collapse-button.html">
+<link rel="import" href="mini-map-icons.html">
+<!--
+  CSS custom properties
+  Name | Description | Default
+  ---- | ----------- | -------
+  `--mini-map-height` | Starting height for the draggable container | 100px
+  `--mini-map-width` | Starting width for the draggable container | 100px
+  `--mini-map-icon-height` | Height of the launch icon | 8px
+  `--mini-map-icon-width` | Width of the launch icon | 8px
+  `--mini-map-directions` | Mixin applied to the word "Directions" | {}
+-->
+<dom-module id="mini-map">
+<template>
+  <style>
+    :host {
+      display: block;
+    }
+    #container {
+      resize: both;
+      height: var(--mini-map-height, 100px);
+      width: var(--mini-map-width, 100px);
+      padding: 0 8px 8px 0;
+      overflow: auto;
+      position: relative;
+    }
+    google-map {
+      height: 100%;
+      width: 100%;
+      z-index: 1;
+    }
+    resize-aware {
+      height: 100%;
+      width: 100%;
+      visibility: hidden;
+      z-index: 0;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+    iron-icon {
+      height: var(--mini-map-icon-height, 8px);
+      width: var(--mini-map-icon-width, 8px);
+      --iron-icon-height: var(--mini-map-icon-height, 8px);
+      --iron-icon-width: var(--mini-map-icon-width, 8px);
+      vertical-align: super;
+    }
+    google-map-marker a {
+      min-width: 100px;
+    }
+    ol {
+      padding-left: 1em;
+      margin: 0 0 0 1em;
+    }
+    .directions {
+      @apply --mini-map-directions;
+    }
+  </style>
+  <div id="container">
+    <google-map
+      id="map"
+      latitude="[[lat]]"
+      longitude="[[lng]]"
+      api-key="[[apiKey]]"
+      disable-default-ui
+      map="{{map}}"
+      on-google-map-ready="_mapReady"
+      zoom="[[zoom]]">
+      <google-map-marker
+        id="marker"
+        hidden$="[[directionsEnabled]]"
+        latitude="[[lat]]"
+        longitude="[[lng]]"
+        icon="[[icon]]"
+        click-events
+        on-google-map-marker-click="_markerClicked"
+        map="[[map]]">
+        <template is="dom-if" if="[[!noDirections]]">
+          <a href$="[[directionsHref]]"
+            target="_blank">Directions<iron-icon icon="mini-map:launch"></iron-icon>
+          </a>
+        </template>
+      </google-map-marker>
+    </google-map>
+    <resize-aware on-element-size-changed="notifyResize"></resize-aware>
+  </div>
+
+  <template is="dom-if" if="[[directionsEnabled]]">
+    <google-map-directions
+      map="[[map]]"
+      api-key="[[apiKey]]"
+      start-address="[[_coords(refLat, refLng)]]"
+      end-address="[[_coords(lat, lng)]]"
+      on-google-map-response="_directionsChanged">
+    </google-map-directions>
+  </template>
+
+
+  <a
+    hidden$="[[_hasRefCoords]]"
+    href$="[[directionsHref]]"
+    target="_blank">Directions<iron-icon icon="mini-map:launch"></iron-icon>
+  </a>
+  <template is="dom-if" if="[[_hasRefCoords]]">
+    <text-toggle
+      hidden$="[[directionsEnabled]]"
+      link
+      cond="{{directionsEnabled}}"
+      f="Show directions">
+    </text-toggle>
+    <template is="dom-if" if="[[_showInstructions(directionsEnabled, noInstructions)]]">
+      <iron-collapse-button>
+        <div slot="collapse-trigger">
+          <span class="directions">Directions</span>
+          <span>([[directions.duration]])</span>
+          <a
+            href$="[[directionsHref]]"
+            target="_blank">launch<iron-icon icon="launch">
+          </iron-icon></a>
+        </div>
+        <ol slot="collapse-content">
+          <template is="dom-repeat" items="[[directions.steps]]">
+            <li inner-h-t-m-l="[[item.html]]"></li>
+          </template>
+        </ol>
+      </iron-collapse-button>
+    </template>
+  </template>
+</template>
+<script>
+Polymer({
+  is: 'mini-map',
+  properties: {
+    /**
+     * Your Google Maps API key.
+     */
+    apiKey: String,
+    /**
+     * Latitude for the map marker, or end point for directions.
+     */
+    lat: {
+      type: Number,
+      value: 0
+    },
+    /**
+     * Longitude for the map marker, or end point for directions.
+     */
+    lng: {
+      type: Number,
+      value: 0
+    },
+    /**
+     * Directions starting point latitude.
+     */
+    refLat: {
+      type: Number,
+      value: 0
+    },
+    /**
+     * Directions starting point longitude.
+     */
+    refLng: {
+      type: Number,
+      value: 0
+    },
+    /**
+     * Default map zoom.
+     */
+    zoom: {
+      type: Number,
+      value: 14,
+    },
+
+    /**
+     * Directions have been requested.
+     */
+    directionsEnabled: {
+      type: Boolean,
+      value: false,
+      notify: true,
+      observer: '_directionsEnabledChanged'
+    },
+    /**
+     * The parsed directions.
+     * Name | Description
+     * --- | ---
+     * `route` | A short description of the overall route.
+     * `distance` | Human friendly string.
+     * `duration` | Human friendly string.
+     * `start` | Start address.
+     * `end` | End address.
+     * `startCoords` | `[refLat, refLng]`
+     * `endCoords` | `[lat, lng]`
+     * `steps` | Array of items with children `instruction`, `distance`, `duration`, `lat`, `lng`.
+     */
+    directions: {
+      type: Object,
+      value: function() { return {}; },
+      readOnly: true,
+      notify: true
+    },
+    /**
+     * The URL for directions on Google Maps.
+     */
+    directionsHref: {
+      type: String,
+      value: '',
+      computed: '_computeDirectionsHref(lat, lng)',
+      notify: true
+    },
+    /**
+     * Don't set min-height and min-width to 200px when directions are enabled.
+     */
+    noGrow: {
+      type: Boolean,
+      value: false
+    },
+
+    /**
+     * Do not show the turn-by-turn instructions when directions are available.
+     */
+    noInstructions: {
+      type: Boolean,
+      value: false
+    },
+    /**
+     * Disable the use of directions entirely.
+     */
+    noDirections: {
+      type: Boolean,
+      value: false
+    },
+
+    /**
+     * The map marker icon to use.
+     */
+     icon: {
+       type: String,
+       value: '/bower_components/mini-map/marker.png'
+     },
+
+    _hasRefCoords: {
+      type: Boolean,
+      value: false,
+      computed: '_computeHasRefCoords(refLat, refLng)'
+    }
+  },
+
+  notifyResize: function() {
+    this.$.map.notifyResize();
+    // Fix for vertical height changes not being picked up.
+    // `resize-aware` has 0 height because it is empty
+    // (bug where the map is invisible if placed inside).
+    this.debounce('extra-resize', () => this.$.map.notifyResize(), 1000);
+  },
+
+  _coords: function(lat, lng) {
+    return lat && lng ? (lat + ',' + lng) : undefined;
+  },
+
+  _computeDirectionsHref: function(lat, lng) {
+    return 'https://www.google.com/maps/dir/?api=1&destination='
+      + this._coords(lat, lng);
+  },
+
+  _mapReady: function() {
+    this.fire('map-ready');
+  },
+
+  _markerClicked: function() {
+    if (!this.noDirections) {
+      this.directionsEnabled = true;
+    }
+  },
+
+  _directionsEnabledChanged: function(enabled) {
+    if (enabled) {
+      this.$.marker.open = false;
+      if (!this.noGrow) {
+        this.$.container.style.minHeight = '200px';
+        this.$.container.style.minWidth = '200px';
+      }
+    }
+  },
+
+  _directionsChanged: function(e, detail) {
+    if (detail && detail.response) {
+      this._setDirections(this._parseDirectionsResponse(detail.response));
+    }
+  },
+
+  _computeHasRefCoords: function(refLat, refLng) {
+    return refLat && refLng;
+  },
+
+  _showInstructions: function(directionsEnabled, noInstructions) {
+    return directionsEnabled && !noInstructions;
+  },
+
+  _parseDirectionsResponse: function(response) {
+    try {
+      let route = response.routes[0];
+      let leg = route.legs[0];
+      let directions = {
+        route: route.summary,
+        distance: leg.distance.text,
+        duration: leg.duration.text,
+        steps: [],
+        start: leg.start_address,
+        end: leg.end_address,
+        startCoords: [this.refLat, this.refLng],
+        endCoords: [this.lat, this.lng],
+      };
+      for (let step of leg.steps) {
+        directions.steps.push({
+          html: step.instructions,
+          distance: step.distance.text,
+          duration: step.duration.text,
+          lat: step.start_point.lat(),
+          lng: step.start_point.lng(),
+        });
+      }
+      return directions;
+    } catch (e) {
+      console.error('Error parsing driving directions:', e, response);
+    }
+  }
+});
+</script>
+</dom-module>

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>mini-map demo</title>
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../mini-map.html">
+
+    <custom-style>
+      <style is="custom-style" include="demo-pages-shared-styles">
+      </style>
+    </custom-style>
+  </head>
+  <body>
+    <div class="vertical-section-container centered">
+      <h3>Basic mini-map demo</h3>
+      <demo-snippet>
+        <template>
+          <input id="lat" value="1"/>lat<br/>
+          <input id="lng" value="1"/>lat<br/>
+          <input id="refLat" value="2"/>refLat<br/>
+          <input id="refLng" value="2"/>refLng<br/>
+          <button onclick="update()">Update</button><br/>
+          <mini-map id="map" api-key="AIzaSyAUPOaJubJnaRTPUd_xX8MOA62gRtSlfCc"></mini-map>
+          <script>
+            var lat = document.getElementById('lat');
+            var lng = document.getElementById('lng');
+            var refLat = document.getElementById('refLat');
+            var refLng = document.getElementById('refLng');
+            var map = document.getElementById('map');
+            map.icon = '../marker.png';
+            function update() {
+              map.lat = Number(lat.value);
+              map.lng = Number(lng.value);
+              map.refLat = Number(refLat.value);
+              map.refLng = Number(refLng.value);
+            }
+          </script>
+        </template>
+      </demo-snippet>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>text-toggle demo</title>
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../text-toggle.html">
+
+    <custom-style>
+      <style is="custom-style" include="demo-pages-shared-styles">
+        .circle {
+          background-color:blue;
+          height:24px;
+          width:24px;
+          border-radius:50%
+        }
+        text-toggle {
+          font-weight: bold;
+          font-family: 'monospace';
+        }
+      </style>
+    </custom-style>
+  </head>
+  <body>
+    <div class="vertical-section-container centered">
+      <p>`text-toggle` text is styled for demo.</p>
+      <h3>With Polymer bindings</h3>
+      <demo-snippet>
+        <dom-bind id="scope">
+          <template>
+
+            1. Show text based on outside condition.<br/>
+            <button on-tap="toggle">Toggle</button>
+            <text-toggle cond="[[cond]]" t="true" f="false"></text-toggle>
+            <br/><br/>
+
+            2. Using element as control.
+            <text-toggle click-events t="true" f="false"></text-toggle>
+            <br/><br/>
+
+            3. As an HTML anchor.
+            <text-toggle link t="true" f="false"></text-toggle>
+            <br/><br/>
+
+            4. Chaging an outside condition.
+            <text-toggle link cond="{{cond}}" t="true" f="false"></text-toggle>
+            <br/><br/>
+
+            5. Signal for change of read-only value.
+            <text-toggle
+              click-events
+              cond="[[readOnly]]"
+              on-cond-changed="toggleReadOnly"
+              t="true"
+              f="false">
+            </text-toggle>
+
+            <script>
+              var scope = document.getElementById('scope');
+              scope.cond = false;
+              scope.readOnly = false;
+              scope.toggle = function() { scope.cond = !scope.cond; };
+              scope.toggleReadOnly = function() { scope.readOnly = !scope.readOnly; };
+            </script>
+
+          </template>
+        </dom-bind>
+      </demo-snippet>
+
+      <h3>Vannila Js</h3>
+      <demo-snippet>
+        <template>
+
+          1. Show text based on outside condition.<br/>
+          <button onclick="toggle();">Toggle</button>
+          <text-toggle id="reader" t="true" f="false"></text-toggle>
+          <br/><br/>
+
+
+          2. Using element as control.
+          <text-toggle click-events t="true" f="false"></text-toggle>
+          <br/><br/>
+
+          3. As an HTML anchor.
+          <text-toggle link t="true" f="false"></text-toggle>
+          <br/><br/>
+
+          4. Chaging an outside condition.
+          <text-toggle id="writer" link t="true" f="false" onclick="setTimeout(read());"></text-toggle>
+          <br/><br/>
+
+          <script>
+            var reader = document.getElementById('reader');
+            var writer = document.getElementById('writer');
+            var cond = false;
+            function toggle() {
+              cond = !cond;
+              reader.cond = cond;
+              writer.cond = cond; // To mimic Polymer example
+            }
+            function read() {
+              cond = writer.cond;
+              reader.cond = cond;
+            }
+          </script>
+        </template>
+      </demo-snippet>
+
+    </div>
+  </body>
+</html>

@@ -29,4 +29,4 @@ for file in glob.glob(sys.argv[1] + "*.json"):
 
 # Change index=True to get index column at beginning
 frame.to_csv('%sallElements_%s.csv' % (directoryPath, today), index=True, columns=[
-    'repo', 'description', 'owner', 'version', 'wc_url', 'updated_at', 'stars', 'forks', 'screenshot_url', 'samplecode_url', 'supported_browsers', 'rating', 'comment', 'external', 'status'])
+    'repo', 'description', 'owner', 'version', 'wc_url', 'updated_at', 'stars', 'forks', 'screenshot_url', 'samplecode_url', 'supported_browsers', 'rating', 'comment', 'external', 'polymer', 'status'])
