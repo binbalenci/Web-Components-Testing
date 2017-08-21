@@ -1,6 +1,6 @@
 # How to use: Just run the file
+# Python 2.7
 
-# python2
 import urllib
 import json
 import io
