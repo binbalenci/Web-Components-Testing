@@ -28,5 +28,18 @@ for file in glob.glob(sys.argv[1] + "*.json"):
     # fileName = os.path.splitext(os.path.basename(file))[0]
 
 # Change index=True to get index column at beginning
+# A - index;
+# F - wc_url (element URL on wc site);
+# J - screenshot_url (URL for the screenshot, mostly stored on Vaadin Dropbox);
+# K - samplecode_url (URL for the sample code, I was using JSFiddles but later changed to CodePen);
+# L - supported_browsers (this needs no explanation);
+# M - rating (this too, keep it mind they are really subjective);
+# N - (comment, the name explains itself);
+# O - external (here lies the links to external document, it could contain multiple links separated by a comma);
+# P - polymer (the version of Polymer framework, 0 means no Polymer specified in bower.json or no Polymer use);
+# Q - status (I will explain this below);
+# R - source (the source of element which I use for importing it online);
+# S - bowerjson (the URL to raw bower.json file, have to remove the “.” in the name since it messes with Sami integration code)
+
 frame.to_csv('%sallElements_%s.csv' % (directoryPath, today), index=True, columns=[
-    'repo', 'description', 'owner', 'version', 'wc_url', 'updated_at', 'stars', 'forks', 'screenshot_url', 'samplecode_url', 'supported_browsers', 'rating', 'comment', 'external', 'polymer', 'status'])
+    'repo', 'description', 'owner', 'version', 'wc_url', 'updated_at', 'stars', 'forks', 'screenshot_url', 'samplecode_url', 'supported_browsers', 'rating', 'comment', 'external', 'polymer', 'status', 'source', 'bowerjson'])
