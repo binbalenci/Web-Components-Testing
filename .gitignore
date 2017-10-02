@@ -1,2 +1,5 @@
 # Ignore all generated files (JSON/CSV)
 generated-files/
+
+# Ignore unused Python scripts
+pythonScript/unused-script/
