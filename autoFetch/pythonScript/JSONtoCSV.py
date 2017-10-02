@@ -1,5 +1,4 @@
 #How to use: Run with python3, input the JSON folder into the 2nd argument
-
 import pandas as pd
 import os
 import errno
@@ -12,7 +11,7 @@ today = datetime.date.today().strftime('%d-%m-%y')
 
 try:
     # Name the directory according to the current date
-    directoryPath = '/Users/nammeo/Desktop/Vaadin/Web-Components Project/autoFetch/allElementsCSV/'
+    directoryPath = '/Users/nammeo/Desktop/Vaadin/Projects/web-components-testing/autoFetch/allElementsCSV/'
     # If not exist, make the new directory
     os.makedirs(directoryPath)
 except OSError as e:

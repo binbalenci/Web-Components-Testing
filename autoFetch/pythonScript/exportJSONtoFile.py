@@ -36,7 +36,7 @@ today = datetime.date.today().strftime('%d-%m-%y')
 
 try:
     # Name the directory according to the current date
-    directoryPath = "/Users/nammeo/Desktop/Vaadin/Web-Components Project/autoFetch/elementsJSON_%s/" % (
+    directoryPath = "/Users/nammeo/Desktop/Vaadin/Projects/web-components-testing/autoFetch/elementsJSON_%s/" % (
         today)
     # If not exist, make the new directory
     os.makedirs(directoryPath)
