@@ -6,3 +6,6 @@ pythonScript/unused-script/
 
 # Pycharm
 .idea/
+
+# web-components testing folder
+webcomponents-playground/
