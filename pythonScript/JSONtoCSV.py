@@ -24,6 +24,10 @@ frame = pd.DataFrame()
 for file in glob.glob(sys.argv[1] + "*.json"):
     pandaObj = pd.read_json(file, encoding='utf-8')
     frame = frame.append(pandaObj, ignore_index=True)
+
+    #EXPERIMENT: Encode emoji to unicode
+    frame['description'] = frame['description'].map(lambda x: x.encode('utf-8'))
+
     # Get filename without extension
     # fileName = os.path.splitext(os.path.basename(file))[0]
 
