@@ -19,8 +19,8 @@ df = pd.read_csv(sys.argv[1])
 # w+: write (plus means it will create a file if not exist)
 f = open('/Users/nammeo/Desktop/Vaadin/Projects/web-components-testing/generated-files/polymer-2-check/updatedElements_%s.csv' % (today), 'a+')
 
-# Define a regex for Polymer 2 version which will match these (>=2.0.0-rc.2 <3.0; ^2.0.0; 1.9 - 2; ^1.0.0 || ^2.0.0, 2.0.0, ^2, ^2.0.2, 2.0.0-rc.3, 1 - 2)
-polymer2Regex = r"(\^2)|(\-\s*2)|([^.]2\.)"
+# Define a regex for Polymer 2 version which will match these (>=2.0.0-rc.2 <3.0; ^2.0.0; 1.9 - 2; ^1.0.0 || ^2.0.0; 2.0.0; ^2; ^2.0.2; 2.0.0-rc.3; 1 - 2, 2.1.0)
+polymer2Regex = r"(\^2)|(\-\s*2)|([^.]2\.)|(^2.)"
 
 print('There is a total of %d elements to check' % (len(df)))
 
@@ -40,6 +40,7 @@ for index, row in df.iterrows():
 	metadataURL = 'https://webcomponents.org/api/meta/%s/%s' % (row['owner'], row['repo'])
 	#metadataURL = 'https://webcomponents.org/api/meta/vaadin/vaadin-grid'
 
+	# This part we're checking if there are any valid JSON for the components. Since the component might already be removed from webcomponents.org
 	try:
 		# Open the URL
 		response = urllib.urlopen(metadataURL)
@@ -50,7 +51,8 @@ for index, row in df.iterrows():
 		print('No valid JSON!')
 		continue
 
-	# Checking JSON children
+	# Checking JSON children if there are version of polymer available in JSON data
+	# Also get the version from JSON to guarantee it's the latest version
 	if 'bower' in jsonData:
 		if 'dependencies' in jsonData['bower']:
 				if 'polymer' in jsonData['bower']['dependencies']:
