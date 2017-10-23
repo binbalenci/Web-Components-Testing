@@ -1,4 +1,6 @@
 # Python 2.7
+# Purpose: to get the latest version of the component imported for correct links to bowerjson and demo file
+# this piece of code is only to update the already-imported version. For future integration, things should be done in JSONtoCSV.py
 
 from __future__ import print_function
 import pandas as pd
