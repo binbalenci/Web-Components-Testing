@@ -13,7 +13,7 @@ print('There is a total of %d elements to convert' % (len(df)))
 # Loop through each row
 for x in range(0, len(df)):
 
-    hasVer = False
+    # hasVer = False
 
     # Skip already read elements (in case errno54: Connection reset by peer)
     # if index < 106: continue
@@ -21,6 +21,10 @@ for x in range(0, len(df)):
     # To keep track the progress
     print('%s %s' % (df.loc[:, 'repo'][x], df.loc[:, 'owner'][x]))
 
+    # Convert description to raw utf-8 value
     df['description'] = df['description'].map(lambda x: x.encode('utf-8'))
+
+	# Add version number to beginning of comment
+    #df.loc[:, 'comment'][x] = '{0}: {1}'.format(df.loc[:, 'version'][x], df.loc[:, 'comment'][x])
 
 df.to_csv('../generated-files/updated.csv', index=False, sep=',')
