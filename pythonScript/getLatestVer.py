@@ -16,12 +16,17 @@ print('There is a total of %d elements to check' % (len(df)))
 for x in range(0, len(df)):
 
     hasVer = False
+    sameVer = True
+    startmessage = ''
+    endmessage = ''
+    currentVer = df.loc[:, 'version'][x]
 
     # Skip already read elements (in case errno54: Connection reset by peer)
-    #if index < 106: continue
+    #if x < 170: continue
 
     # To keep track the progress
-    print('%s %s' % (df.loc[:, 'repo'][x], df.loc[:, 'owner'][x]))
+    startmessage = '{2} {0} {1}'.format(df.loc[:, 'repo'][x], df.loc[:, 'owner'][x], x)
+    print(startmessage, end='')
 
     # Generate API link
     metadataURL = 'https://webcomponents.org/api/meta/%s/%s' % (df.loc[:, 'owner'][x], df.loc[:, 'repo'][x])
@@ -38,12 +43,25 @@ for x in range(0, len(df)):
         continue
 
     if 'version' in jsonData:
-        df.loc[:, 'version'][x] = jsonData['version']
         hasVer = True
+        if df.loc[:, 'version'][x] != jsonData['version']:
+            df.loc[:, 'version'][x] = jsonData['version']
+            sameVer = False
     else:
         continue
 
-    if hasVer:
-        print('Original: %s -> Updated: %s' % (df.loc[:, 'version'][x], jsonData['version']))
+    # Add version number to beginning of comment
+    commentisnan = pd.isnull(df.loc[:, 'comment'][x])
+    df.loc[:, 'comment'][x] = '{0}: {1}'.format(df.loc[:, 'version'][x], '' if commentisnan else df.loc[:, 'comment'][x])
 
-df.to_csv('../generated-files/updated.csv', index=False, sep=',')
+    if hasVer == True and sameVer == False:
+        endmessage = 'Original: {0} -> Updated: {1}'.format(currentVer, jsonData['version'])
+        print(endmessage.rjust(50, '-'))
+    elif hasVer == True and sameVer == True:
+        endmessage = 'No new version!'
+        print(endmessage.rjust(50, '-'))
+    elif hasVer == False:
+        endmessage = 'No version detected!'
+        print(endmessage.rjust(50, '-'))
+
+    df.to_csv('../generated-files/updated.csv', index=False, sep=',')
