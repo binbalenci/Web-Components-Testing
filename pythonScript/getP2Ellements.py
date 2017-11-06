@@ -14,6 +14,9 @@ today = datetime.date.today().strftime('%d-%m-%y')
 # Read csv from input (input unqualified.csv here)
 df = pd.read_csv(sys.argv[1])
 
+# Make an array for recording the removed components from webcomponents.org
+removedcomponentsindex = [];
+
 # Make a new csv file for storing updated elements
 # a+: append
 # w+: write (plus means it will create a file if not exist)
@@ -31,7 +34,7 @@ for index, row in df.iterrows():
 	p2 = False
 
 	# Skip already read elements (in case errno54: Connection reset by peer)
-	# if index < 545: continue
+	#if index < 308: continue
 
 	# To keep track the progress
 	print('%d %s %s' % (index, row['repo'], row['owner']))
@@ -48,6 +51,7 @@ for index, row in df.iterrows():
 		# Load JSON
 		jsonData = simplejson.loads(response.read())
 	except simplejson.scanner.JSONDecodeError:
+		removedcomponentsindex.append('{0} - {1}'.format(row['index'],row['repo']))
 		print('No valid JSON!')
 		continue
 
@@ -74,3 +78,4 @@ for index, row in df.iterrows():
 
 	if p2:
 		print(polymerVer)
+print(removedcomponentsindex)
