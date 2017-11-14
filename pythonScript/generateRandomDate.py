@@ -1,3 +1,5 @@
+# Python 2.7 or 3 (whatever, I have not tested with 3 yet)
+# Purpose: this script is to generate random unique epoch date for the spreadsheet
 # 29-06-2017 11:35:13 -> 1498736113
 # 06-11-2017 11:35:13 -> 1509968113
 
