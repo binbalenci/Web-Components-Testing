@@ -1,5 +1,6 @@
 # Python 2.7
 from __future__ import print_function
+from socket import error as SocketError
 import urllib
 import simplejson
 import re
@@ -7,8 +8,8 @@ import sys
 import time
 import multiprocessing as mp
 import time
-from socket import error as SocketError
 import errno
+import io
 
 # Define a list of keywords to check
 wckeywords = ["web-components", "web-component", "custom-element", "custom-elements", "polymer"]
@@ -27,7 +28,7 @@ def checkElement(url):
     print("{0}".format(url))
 
     # Make a new text file to record all the web-components
-    f = open("/Users/nammeo/Desktop/Vaadin/Projects/web-components-testing/generated-files/bower-web-components.txt", "a")
+    f = io.open("/Users/nammeo/Desktop/Vaadin/Projects/web-components-testing/generated-files/bower-web-components.txt", "a")
 
     # Check if the repository is from github
     matchedString = p.match(url)
@@ -129,3 +130,4 @@ if __name__ == "__main__":
     elapsedtime = time.time() - starttime
 
     print("Times taken: {0}".format(elapsedtime))
+    # checkElement("https://github.com/NawaraGFX/Counter-Up.git")
