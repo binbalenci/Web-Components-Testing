@@ -56,26 +56,30 @@ def checkElement(url):
     # Also get the version from JSON to guarantee it's the latest version
     if 'keywords' in packagejson:
         checkDependencies = True
-        # Converting things to lowercase for the sake of using `in`
-        keywords = [x.lower() for x in packagejson['keywords']]
-        # Define a variable for checking if the keywords section contains any keywords related to web-compoents
-        hasKeyword = any(x in wckeywords for x in keywords)
-        if hasKeyword:
-            # print("Qualified! ", end="")
-            checkDependencies = False
-            f.write("{0}\n".format(url))
-            return True
-    # else:
-        # print("No keywords found! ", end="")
+        # Check if keywords is empty
+        if packagejson['keywords']:
+            # Converting things to lowercase for the sake of using `in`
+            keywords = [x.lower() for x in packagejson['keywords']]
+            # Define a variable for checking if the keywords section contains any keywords related to web-compoents
+            hasKeyword = any(x in wckeywords for x in keywords)
+            if hasKeyword:
+                # print("Qualified! ", end="")
+                checkDependencies = False
+                f.write("{0}\n".format(url))
+                return True
+        # else:
+            # print("No keywords found! ", end="")
 
     if 'dependencies' in packagejson and checkDependencies:
-        # Converting things to lowercase for the sake of using `in`
-        dependencies = [x.lower() for x in packagejson['dependencies']]
-        if 'polymer' in dependencies: # Converting everything to lowercase
-            # print("Qualified")
-            # wccount += 1
-            f.write("{0}\n".format(url))
-            return True
+        # Check if dependencies is empty
+        if packagejson['dependencies']:
+            # Converting things to lowercase for the sake of using `in`
+            dependencies = [x.lower() for x in packagejson['dependencies']]
+            if 'polymer' in dependencies: # Converting everything to lowercase
+                # print("Qualified")
+                # wccount += 1
+                f.write("{0}\n".format(url))
+                return True
     else:
         # print("No dependencies found! ", end="")
         return False
