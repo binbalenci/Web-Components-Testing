@@ -63,8 +63,7 @@ def checkElement(url):
     # Also get the version from JSON to guarantee it's the latest version
     if 'keywords' in packagejson:
         checkDependencies = True
-        # Check if keywords is empty
-        if packagejson['keywords']:
+        try:
             # Converting things to lowercase for the sake of using `in`
             keywords = [x.lower() for x in packagejson['keywords']]
             # Define a variable for checking if the keywords section contains any keywords related to web-compoents
@@ -74,12 +73,13 @@ def checkElement(url):
                 checkDependencies = False
                 f.write("{0}\n".format(url))
                 return True
+        except AttributeError:
+            pass
         # else:
             # print("No keywords found! ", end="")
 
     if 'dependencies' in packagejson and checkDependencies:
-        # Check if dependencies is empty
-        if packagejson['dependencies']:
+        try:
             # Converting things to lowercase for the sake of using `in`
             dependencies = [x.lower() for x in packagejson['dependencies']]
             if 'polymer' in dependencies: # Converting everything to lowercase
@@ -87,6 +87,8 @@ def checkElement(url):
                 # wccount += 1
                 f.write("{0}\n".format(url))
                 return True
+        except AttributeError:
+            pass
     else:
         # print("No dependencies found! ", end="")
         return False
