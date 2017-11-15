@@ -38,7 +38,7 @@ def checkElement(url):
     #     print(str(i) + " " + matchedString.group(i))
 
     if matchedString:
-        bowerjsonrawlink = "https://rawgit.com/{0}/{1}/master/bower.json".format(matchedString.group(4), matchedString.group(6))
+        bowerjsonrawlink = "https://rawgit.com/{0}/{1}/master/bower.json".format(matchedString.group(3), matchedString.group(5))
     else:
         # print("Not Github repo! ", end="")
         return False
