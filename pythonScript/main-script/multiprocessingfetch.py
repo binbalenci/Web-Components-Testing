@@ -15,7 +15,7 @@ wckeywords = ["web-components", "web-component", "custom-element", "custom-eleme
 checkDependencies = True
 
 # Define a regex for the repo URL
-repoRegex = r"(https:\/\/github.com)(\/)([^:\/\s]+)(\/)([^:\/\s]+)(.git)"
+repoRegex = r"(\d+\s)(https:\/\/github.com)(\/)([^:\/\s]+)(\/)([^:\/\s]+)(.git)"
 
 p = re.compile(repoRegex, re.IGNORECASE)
 
@@ -95,7 +95,12 @@ except simplejson.scanner.JSONDecodeError:
 
 # Get the repos URL
 urls = [packagesjson[i]['url'] for i in range(len(packagesjson))]
-
+indexedurls = []
+index = 0
+for url in urls:
+    url = "{0} {1}".format(index, url)
+    indexedurls.append(url)
+    index += 1
 
 if __name__ == "__main__":
     print("There are a total of {0} repos to check.".format(len(urls)))
@@ -106,7 +111,7 @@ if __name__ == "__main__":
     # Get the start time
     starttime = time.time()
 
-    r = pool.map(checkElement, urls)
+    r = pool.map(checkElement, indexedurls)
     pool.close()
     pool.join()
 
