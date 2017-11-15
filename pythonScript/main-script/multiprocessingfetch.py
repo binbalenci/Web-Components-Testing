@@ -92,13 +92,13 @@ bowerregistry = "https://registry.bower.io/packages"
 try:
     response = urllib.urlopen(bowerregistry)
     # Load it into json
-    packagesjson = simplejson.loads(response.read()) # Now the whole bower registry json is stored in packagejson
+    packages = simplejson.loads(response.read()) # Now the whole bower registry json is stored in packagejson
 except simplejson.scanner.JSONDecodeError:
     print('No valid JSON in Bower registry. Quitting!')
     sys.exit(0)
 
 # Get the repos URL
-urls = [packagesjson[i]['url'] for i in range(len(packagesjson))]
+urls = [packages[i]['url'] for i in range(len(packages))]
 
 
 if __name__ == "__main__":
