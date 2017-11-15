@@ -110,7 +110,10 @@ if __name__ == "__main__":
     # Get the start time
     starttime = time.time()
 
-    r = pool.map(checkElement, urls)
+    # r = pool.map(checkElement, urls)
+    for i in range(len(urls)):
+        print(i, end=" ")
+        pool.apply_async(checkElement, args = (urls[i], ))
     pool.close()
     pool.join()
 
