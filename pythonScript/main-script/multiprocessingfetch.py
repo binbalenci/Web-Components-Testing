@@ -7,6 +7,8 @@ import sys
 import time
 import multiprocessing as mp
 import time
+from socket import error as SocketError
+import errno
 
 # Define a list of keywords to check
 wckeywords = ["web-components", "web-component", "custom-element", "custom-elements", "polymer"]
@@ -51,6 +53,11 @@ def checkElement(url):
     except simplejson.scanner.JSONDecodeError:
         # print('No bower.json! ', end="")
         return False
+    except SocketError as e:
+        if e.errno != errno.ECONNRESET:
+            raise # Not error we are looking for
+        # Handle error here.
+        checkElement(url)
 
     # Checking JSON children if there are version of polymer available in JSON data
     # Also get the version from JSON to guarantee it's the latest version
@@ -110,10 +117,10 @@ if __name__ == "__main__":
     # Get the start time
     starttime = time.time()
 
-    # r = pool.map(checkElement, urls)
-    for i in range(len(urls)):
-        print(i, end=" ")
-        pool.apply_async(checkElement, args = (urls[i], ))
+    r = pool.map(checkElement, urls)
+    # for i in range(len(urls)):
+    #     print(i, end=" ")
+    #     pool.apply_async(checkElement, args = (urls[i], ))
     pool.close()
     pool.join()
 
