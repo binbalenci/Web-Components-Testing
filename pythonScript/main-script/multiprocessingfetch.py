@@ -25,13 +25,18 @@ p = re.compile(repoRegex, re.IGNORECASE)
 def checkElement(url):
     global checkDependencies
 
-    print("{0}".format(url))
+    try:
+        print("{0}".format(url))
+    except Exception:
+        print(url)
+        print("It's this printing shit!")
 
-    # Make a new text file to record all the web-components
-    f = io.open("/Users/nammeo/Desktop/Vaadin/Projects/web-components-testing/generated-files/bower-web-components.txt", "a")
-
-    # Check if the repository is from github
-    matchedString = p.match(url)
+    try:
+        # Make a new text file to record all the web-components]t
+        f = io.open("/Users/nammeo/Desktop/Vaadin/Projects/web-components-testing/generated-files/bower-web-components.txt", "ab")
+    except Exception:
+        print(url)
+        print("It's the open!")
 
     # Matched String is splitted into several RegExp groups
     # 0: whole matchedString
@@ -40,11 +45,17 @@ def checkElement(url):
     # for i in range(0,7):
     #     print(str(i) + " " + matchedString.group(i))
 
-    if matchedString:
-        bowerjsonrawlink = "https://rawgit.com/{0}/{1}/master/bower.json".format(matchedString.group(3), matchedString.group(5))
-    else:
-        # print("Not Github repo! ", end="")
-        return False
+    try:
+        # Check if the repository is from github
+        matchedString = p.match(url)
+        if matchedString:
+            bowerjsonrawlink = "https://rawgit.com/{0}/{1}/master/bower.json".format(matchedString.group(3), matchedString.group(5))
+        else:
+            # print("Not Github repo! ", end="")
+            return False
+    except Exception:
+        print(url)
+        print("It's matchedString!")
 
     try:
         # Open the URL
@@ -59,6 +70,10 @@ def checkElement(url):
             raise # Not error we are looking for
         # Handle error here.
         checkElement(url)
+    except UnboundLocalError:
+        print(url)
+        print("It's urlopen!")
+        pass
 
     # Checking JSON children if there are version of polymer available in JSON data
     # Also get the version from JSON to guarantee it's the latest version
@@ -72,10 +87,17 @@ def checkElement(url):
             if hasKeyword:
                 # print("Qualified! ", end="")
                 checkDependencies = False
-                f.write("{0}\n".format(url))
+                try:
+                    f.write("{0}\n".format(url))
+                except Exception:
+                    print(url)
+                    print("It's the write")
                 return True
         except AttributeError:
             pass
+        except Exception:
+            print(url)
+            print("It's keywords, somewhere!")
         # else:
             # print("No keywords found! ", end="")
 
@@ -86,10 +108,16 @@ def checkElement(url):
             if 'polymer' in dependencies: # Converting everything to lowercase
                 # print("Qualified")
                 # wccount += 1
-                f.write("{0}\n".format(url))
+                try:
+                    f.write("{0}\n".format(url))
+                except Exception:
+                    print("It's the write")
                 return True
         except AttributeError:
             pass
+        except Exception:
+            print(url)
+            print("It's dependencies, somewhere!")
     else:
         # print("No dependencies found! ", end="")
         return False
@@ -115,15 +143,17 @@ if __name__ == "__main__":
     print("There are a total of {0} repos to check.".format(len(urls)))
 
     # Create a pool with n processors
-    pool = mp.Pool(processes=8)
+    pool = mp.Pool(processes=16)
 
     # Get the start time
     starttime = time.time()
 
-    r = pool.map(checkElement, urls)
-    # for i in range(len(urls)):
-    #     print(i, end=" ")
-    #     pool.apply_async(checkElement, args = (urls[i], ))
+    # r = pool.map(checkElement, urls)
+    for i in range(len(urls)):
+        try:
+            pool.apply_async(checkElement, args = (urls[i], ))
+        except UnicodeDecodeError:
+            pass
     pool.close()
     pool.join()
 
