@@ -7,7 +7,6 @@ import re
 import sys
 import time
 import multiprocessing as mp
-import time
 import errno
 import io
 
@@ -40,8 +39,8 @@ def checkElement(url):
 
     # Matched String is splitted into several RegExp groups
     # 0: whole matchedString
-    # 4: owner
-    # 6: repo
+    # 3: owner
+    # 5: repo
     # for i in range(0,7):
     #     print(str(i) + " " + matchedString.group(i))
 
@@ -138,7 +137,6 @@ except simplejson.scanner.JSONDecodeError:
 # Get the repos URL
 urls = [packages[i]['url'] for i in range(len(packages))]
 
-
 if __name__ == "__main__":
     print("There are a total of {0} repos to check.".format(len(urls)))
 
@@ -160,4 +158,4 @@ if __name__ == "__main__":
     elapsedtime = time.time() - starttime
 
     print("Times taken: {0}".format(elapsedtime))
-    # checkElement("https://github.com/NawaraGFX/Counter-Up.git")
+    checkElement("https://github.com/NawaraGFX/Counter-Up.git")
