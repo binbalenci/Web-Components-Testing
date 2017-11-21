@@ -2,7 +2,7 @@ import mysql.connector
 from mysql.connector import errorcode
 from datetime import datetime
 import sys
-import json
+import simplejson
 import re
 from urllib.request import urlopen
 
@@ -22,7 +22,7 @@ config = {
 cnx = mysql.connector.connect(**config)
 cursor = cnx.cursor()
 
-data = '[{"name":"0x100-angular-steps","url":"https://github.com/0x100/angular-steps.git"},{"name":"10digit-geo","url":"https://github.com/10digit/geo.git"},{"name":"10digit-invoices","url":"https://github.com/10digit/invoicesV"}]'
+data = '[{"name":"0x100-angular-steps","url":"https://github.com/0x100/angular-steps.git"},{"name":"10digit-geo","url":"https://github.com/10digit/geo.git"},{"name":"10digit-invoices","url":"https://github.com/10digit/invoicesV"},{"name":"2klic_graphics_icons","url":"https://jolava@bitbucket.org/2klicdev/graphics_icons.git"},{"name":"vaadin-button","url":"https://github.com/vaadin/vaadin-button.git"}]'
 packages = simplejson.loads(data)
 
 # # Read full bower package json
@@ -53,17 +53,24 @@ for package in packages:
         repo = matchedString.group(5)
         owner = matchedString.group(3)
         package_id = "{0}_{1}".format(owner, repo)
+        is_github = 1
+    else:
+        repo = ""
+        owner = ""
+        package_id = ""
+        is_github = 0
 
     add_package = (
         "INSERT INTO registry "
-        "(repo, owner, url, package_id) "
-        "VALUES (%(repo)s, %(owner)s, %(url)s)"
+        "(repo, owner, url, is_github, package_id) "
+        "VALUES (%(repo)s, %(owner)s, %(url)s, %(is_github)s, %(package_id)s)"
     )
 
     data_package = {
         'repo': repo,
         'owner': owner,
         'url': url,
+        'is_github': is_github,
         'package_id': package_id
     }
 
