@@ -32,14 +32,14 @@ checkDependencies = True
 add_checked = (
     "UPDATE registry "
     "SET checked = %s "
-    "WHERE package_id = %s"
+    "WHERE url = %s"
 )
 
 # Query for adding is_wc and checked
 add_is_wc = (
     "UPDATE registry "
     "SET is_wc = %s, checked = %s "
-    "WHERE package_id = %s"
+    "WHERE url = %s"
 )
 
 # First I loop through the owner and repo I got from the query then I get the owner and repo using dictionary index. After that, actually add a column to the db as `is_github`. So that I can check if it's 0/1/null --> add to checked. Next, get the bowerjson, if fail then --> checked --> done. Check keywords, if fail --> checcked --> not. If not, check if wc, if wc --> is_wc = 1, if not --> go to dependencies, if wc --> is_wc = 1, if not is_wc = 0 --> checked.
@@ -77,7 +77,7 @@ def check_element(package):
                 # Loads it into a JSON
                 package_json = simplejson.loads(data)
             except simplejson.scanner.JSONDecodeError:
-                cursor.execute(add_checked, (checked_time, package_id))
+                cursor.execute(add_checked, (checked_time, url))
                 cnx.commit()
                 return
             except SocketError as e:
@@ -97,11 +97,13 @@ def check_element(package):
                     # Define a variable for checking if the keywords section contains any keywords related to web-compoents
                     hasKeyword = any(x in wckeywords for x in keywords)
                     if hasKeyword:
+                        print("Qualified!")
                         checkDependencies = False
-                        cursor.execute(add_is_wc, (1, checked_time, package_id))
+                        cursor.execute(add_is_wc, (1, checked_time, url))
                         cnx.commit()
                 ### THIRD CONDITION ENDS: Do nothing, program will move on fourth condition
                 else:
+                    print("No matched keywords!")
                     pass
 
             ### FOURTH CONDITION STARTS: Check if there is polymer in dependencies. If there is, add checked and is_wc. If not, add is_wc and checked.
@@ -109,21 +111,25 @@ def check_element(package):
                 dependencies = package_json['dependencies']
                 if dependencies:
                     # Converting things to lowercase for the sake of using `in`
-                    dependencies = [x.lower() for x in packagejson['dependencies']]
+                    dependencies = [x.lower() for x in package_json['dependencies']]
                     if 'polymer' in dependencies:
-                        cursor.execute(add_is_wc, (1, checked_time, package_id))
+                        print("Qualified!")
+                        cursor.execute(add_is_wc, (1, checked_time, url))
                         cnx.commit()
                 else:
-                    cursor.execute(add_is_wc, (0, checked_time, package_id))
+                    print("no polymer!")
+                    cursor.execute(add_is_wc, (0, checked_time, url))
                     cnx.commit()
                     pass
 
         ### SECOND CONDITION ENDS: add checked time
         else:
-            cursor.execute(add_checked, (checked_time, package_id))
+            print("Not a github repo!")
+            cursor.execute(add_checked, (checked_time, url))
             cnx.commit()
     ### FIRST CONDITION ENDS: else just do nothing
     else:
+        print("Already checked!")
         pass
 
 if __name__ == "__main__":
