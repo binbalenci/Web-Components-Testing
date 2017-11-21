@@ -76,6 +76,7 @@ def check_element(package):
                 data = urlopen(bower_json_link).read()
                 # Loads it into a JSON
                 package_json = simplejson.loads(data)
+            # Check if there is a file named bower.json or the file is readable
             except simplejson.scanner.JSONDecodeError:
                 cursor.execute(add_checked, (checked_time, url))
                 cnx.commit()
@@ -85,6 +86,12 @@ def check_element(package):
                     raise # Not error we are looking for
                 # Handle error here.
                 check_element(package)
+            # Check if the link is reachable
+            except urllib.error.HTTPError as e:
+                print(e.code)
+                print(e.read())
+                cursor.execute(add_checked, (checked_time, url))
+                cnx.commit()
 
             checkDependencies = True
 
