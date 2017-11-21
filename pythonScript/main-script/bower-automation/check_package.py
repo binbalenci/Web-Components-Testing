@@ -4,6 +4,7 @@ import mysql.connector
 import sys
 import re # regex
 from urllib.request import urlopen
+from urllib.error import URLError, HTTPError
 import simplejson
 import time
 import multiprocessing as mp
@@ -81,17 +82,18 @@ def check_element(package):
                 cursor.execute(add_checked, (checked_time, url))
                 cnx.commit()
                 return
-            except SocketError as e:
-                if e.errno != errno.ECONNRESET:
-                    raise # Not error we are looking for
-                # Handle error here.
-                check_element(package)
             # Check if the link is reachable
-            except urllib.error.HTTPError as e:
+            except HTTPError as e:
                 print(e.code)
-                print(e.read())
                 cursor.execute(add_checked, (checked_time, url))
                 cnx.commit()
+                return
+            except SocketError as e:
+                print("Socket Error")
+                print(e)
+                # if e.errno != errno.ECONNRESET:
+                #     raise # Not error we are looking for
+                # # Handle error here.
 
             checkDependencies = True
 
