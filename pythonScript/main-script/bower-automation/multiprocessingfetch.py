@@ -1,7 +1,7 @@
 # Python 2.7
 from __future__ import print_function
 from socket import error as SocketError
-import urllib
+from urllib.request import urlopen
 import simplejson
 import re
 import sys
@@ -58,7 +58,7 @@ def checkElement(url):
 
     try:
         # Open the URL
-        response = urllib.urlopen(bowerjsonrawlink)
+        response = urlopen(bowerjsonrawlink)
         # Load JSON
         packagejson = simplejson.loads(response.read())
     except simplejson.scanner.JSONDecodeError:
@@ -127,7 +127,7 @@ def checkElement(url):
 bowerregistry = "https://registry.bower.io/packages"
 
 try:
-    response = urllib.urlopen(bowerregistry)
+    response = urlopen(bowerregistry)
     # Load it into json
     packages = simplejson.loads(response.read()) # Now the whole bower registry json is stored in packagejson
 except simplejson.scanner.JSONDecodeError:
@@ -158,4 +158,4 @@ if __name__ == "__main__":
     elapsedtime = time.time() - starttime
 
     print("Times taken: {0}".format(elapsedtime))
-    checkElement("https://github.com/NawaraGFX/Counter-Up.git")
+    # checkElement("https://github.com/10pearls/angular-tooltips.git")
