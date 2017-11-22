@@ -57,7 +57,7 @@ def check_element(package):
     package_id = package['package_id']
 
     # Define cursor for executing query
-    cursor = cnx.cursor(buffered=True, dictionary=True)
+    curB = cnx.cursor(buffered=True, dictionary=True)
 
     # Get the checked time in mysql datetime format
     checked_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -79,13 +79,13 @@ def check_element(package):
                 package_json = simplejson.loads(data)
             # Check if there is a file named bower.json or the file is readable
             except simplejson.scanner.JSONDecodeError:
-                cursor.execute(add_checked, (checked_time, url))
+                curB.execute(add_checked, (checked_time, url))
                 cnx.commit()
                 return
             # Check if the link is reachable
             except HTTPError as e:
                 print(e.code)
-                cursor.execute(add_checked, (checked_time, url))
+                curB.execute(add_checked, (checked_time, url))
                 cnx.commit()
                 return
             except SocketError as e:
@@ -108,12 +108,11 @@ def check_element(package):
                     if hasKeyword:
                         print("Qualified!")
                         checkDependencies = False
-                        cursor.execute(add_is_wc, (1, checked_time, url))
+                        curB.execute(add_is_wc, (1, checked_time, url))
                         cnx.commit()
                 ### THIRD CONDITION ENDS: Do nothing, program will move on fourth condition
                 else:
                     print("No matched keywords!")
-                    pass
 
             ### FOURTH CONDITION STARTS: Check if there is polymer in dependencies. If there is, add checked and is_wc. If not, add is_wc and checked.
             if 'dependencies' in package_json and checkDependencies:
@@ -123,19 +122,22 @@ def check_element(package):
                     dependencies = [x.lower() for x in package_json['dependencies']]
                     if 'polymer' in dependencies:
                         print("Qualified!")
-                        cursor.execute(add_is_wc, (1, checked_time, url))
+                        curB.execute(add_is_wc, (1, checked_time, url))
                         cnx.commit()
                 else:
                     print("no polymer!")
-                    cursor.execute(add_is_wc, (0, checked_time, url))
+                    curB.execute(add_is_wc, (0, checked_time, url))
                     cnx.commit()
-                    pass
-
+            else:
+                print("no dependencies!")
+                curB.execute(add_checked, (checked_time, url))
+                cnx.commit()
         ### SECOND CONDITION ENDS: add checked time
         else:
             print("Not a github repo!")
-            cursor.execute(add_checked, (checked_time, url))
+            curB.execute(add_checked, (checked_time, url))
             cnx.commit()
+        curB.close()
     ### FIRST CONDITION ENDS: else just do nothing
     else:
         print("Already checked!")
@@ -146,13 +148,13 @@ if __name__ == "__main__":
     cnx = mysql.connector.connect(**config)
 
     # Define cursor for executing query
-    cursor = cnx.cursor(buffered=True, dictionary=True)
+    curA = cnx.cursor(buffered=True, dictionary=True)
 
     query = ("SELECT * FROM registry WHERE checked IS NULL")
 
     cursor.execute(query)
 
-    for package in cursor:
+    for package in curA:
         check_element(package)
 
     cursor.close()
