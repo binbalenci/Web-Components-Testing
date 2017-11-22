@@ -24,7 +24,7 @@ config = {
 }
 
 # Define a list of keywords to check
-wckeywords = ["web-components", "web-component", "custom-element", "custom-elements", "polymer"]
+wckeywords = ["web-components", "web-component", "custom-element", "custom-elements", "polymer", "web components", "web component", "custom element", "custom elements", "webcomponent", "webcomponents", "customelement", "customelements"]
 
 # Define a boolean to check dependencies after checking keywords
 checkDependencies = True
@@ -124,9 +124,13 @@ def check_element(package):
                         print("Qualified!")
                         curB.execute(add_is_wc, (1, checked_time, url))
                         cnx.commit()
+                    else:
+                        print("no polymer!")
+                        curB.execute(add_is_wc, (0, checked_time, url))
+                        cnx.commit()
                 else:
-                    print("no polymer!")
-                    curB.execute(add_is_wc, (0, checked_time, url))
+                    print("dependencies empty!")
+                    curB.execute(add_checked, (checked_time, url))
                     cnx.commit()
             else:
                 print("no dependencies!")
@@ -150,37 +154,29 @@ if __name__ == "__main__":
     # Define cursor for executing query
     curA = cnx.cursor(buffered=True, dictionary=True)
 
-    query = ("SELECT * FROM registry WHERE id=10")
+    # query = ("SELECT * FROM registry WHERE checked IS NULL")
+    query = ("SELECT * FROM registry WHERE id=15")
 
     curA.execute(query)
 
     # Print the number of rows to check
     print("There are a total of {0} urls to check.".format(curA.rowcount))
 
+    # Create a pool with n processors
+    # pool = mp.Pool(processes=16)
+
+    # Get the start time
+    starttime = time.time()
+
     for package in curA:
         check_element(package)
+        # pool.apply_async(checkElement, args = (urls[i], ))
+
+    elapsedtime = time.time() - starttime
+
+    print("Times taken: {0} seconds".format(elapsedtime))
 
     curA.close()
     cnx.close()
-
-    # print("There are a total of {0} repos to check.".format(len(urls)))
-    #
-    # # Create a pool with n processors
-    # pool = mp.Pool(processes=16)
-    #
-    # # Get the start time
-    # starttime = time.time()
-    #
-    # # r = pool.map(checkElement, urls)
-    # for i in range(len(urls)):
-    #     try:
-    #         pool.apply_async(checkElement, args = (urls[i], ))
-    #     except UnicodeDecodeError:
-    #         pass
     # pool.close()
     # pool.join()
-    #
-    # elapsedtime = time.time() - starttime
-    #
-    # print("Times taken: {0}".format(elapsedtime))
-    # checkElement("https://github.com/NawaraGFX/Counter-Up.git")
