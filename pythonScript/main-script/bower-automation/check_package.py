@@ -150,14 +150,17 @@ if __name__ == "__main__":
     # Define cursor for executing query
     curA = cnx.cursor(buffered=True, dictionary=True)
 
-    query = ("SELECT * FROM registry WHERE checked IS NULL")
+    query = ("SELECT * FROM registry WHERE id=10")
 
-    cursor.execute(query)
+    curA.execute(query)
+
+    # Print the number of rows to check
+    print("There are a total of {0} urls to check.".format(curA.rowcount))
 
     for package in curA:
         check_element(package)
 
-    cursor.close()
+    curA.close()
     cnx.close()
 
     # print("There are a total of {0} repos to check.".format(len(urls)))
