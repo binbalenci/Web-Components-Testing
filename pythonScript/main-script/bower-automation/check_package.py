@@ -76,7 +76,7 @@ def check_element(package):
                 # Retrieve the content read from bower.json
                 data = urlopen(bower_json_link).read()
                 # Loads it into a JSON
-                package_json = simplejson.loads(data)
+                package_json = simplejson.loads(data, encoding='latin-1')
             # Check if there is a file named bower.json or the file is readable
             except simplejson.scanner.JSONDecodeError:
                 curB.execute(add_checked, (checked_time, url))
@@ -102,7 +102,8 @@ def check_element(package):
                 keywords = package_json['keywords']
                 if keywords:
                     # Converting things to lowercase for the sake of using `in`
-                    keywords = [x.lower() for x in keywords]
+                    # Double check if x is null or x is not string
+                    keywords = [x.lower() for x in keywords if x is not None and isinstance(x, str)]
                     # Define a variable for checking if the keywords section contains any keywords related to web-compoents
                     hasKeyword = any(x in wckeywords for x in keywords)
                     if hasKeyword:
