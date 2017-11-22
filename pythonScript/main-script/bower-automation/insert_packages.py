@@ -55,7 +55,7 @@ for package in packages:
         repo = matchedString.group(5)
         owner = matchedString.group(3)
         # I can't use owner_repo here because the url in bower registry can be duplicate, however, my wild guess is that the name must be unique so I am using the name the author used for their package
-        # New problems occur, the Unique key is not case sensitive yet. Apparently, the name in bower packges is case sensitive. I will set the server setting to case sensitive
+        # New problems occur, the Unique key is not case sensitive yet. Apparently, the name in bower packges is case sensitive. I will set the server setting to case sensitives
         package_id = "{0}_{1}".format(owner, name)
         is_github = 1
     else:
@@ -64,8 +64,9 @@ for package in packages:
         package_id = None
         is_github = 0
 
+    # Add ignore so that mysql will ignore execution errors if there is a duplicate package_id
     add_package = (
-        "INSERT INTO registry "
+        "INSERT IGNORE INTO registry "
         "(repo, owner, url, is_github, package_id) "
         "VALUES (%(repo)s, %(owner)s, %(url)s, %(is_github)s, %(package_id)s)"
     )
