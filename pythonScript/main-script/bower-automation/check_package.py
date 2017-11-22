@@ -126,7 +126,7 @@ def check_element(package):
                         cnx.commit()
                     else:
                         print("no polymer!")
-                        curB.execute(add_is_wc, (0, checked_time, url))
+                        curB.execute(add_checked, (checked_time, url))
                         cnx.commit()
                 else:
                     print("dependencies empty!")
@@ -145,7 +145,6 @@ def check_element(package):
     ### FIRST CONDITION ENDS: else just do nothing
     else:
         print("Already checked!")
-        pass
 
 if __name__ == "__main__":
     # Make a connection to database
@@ -154,23 +153,27 @@ if __name__ == "__main__":
     # Define cursor for executing query
     curA = cnx.cursor(buffered=True, dictionary=True)
 
-    # query = ("SELECT * FROM registry WHERE checked IS NULL")
-    query = ("SELECT * FROM registry WHERE id=15")
+    # Get the begin and end id from Arguments
+    begin_id = sys.argv[1]
+    end_id = sys.argv[2]
+
+    query = ("SELECT * FROM registry WHERE checked IS NULL AND id BETWEEN {0} AND {1}".format(begin_id, end_id))
+    # query = ("SELECT * FROM registry WHERE id=15")
 
     curA.execute(query)
 
     # Print the number of rows to check
     print("There are a total of {0} urls to check.".format(curA.rowcount))
 
-    # Create a pool with n processors
-    # pool = mp.Pool(processes=16)
+    # Create a pool with 8 processors
+    pool = mp.Pool(processes=4)
 
     # Get the start time
     starttime = time.time()
 
     for package in curA:
-        check_element(package)
-        # pool.apply_async(checkElement, args = (urls[i], ))
+        # check_element(package)
+        pool.apply(check_element, args = (package, ))
 
     elapsedtime = time.time() - starttime
 
@@ -178,5 +181,5 @@ if __name__ == "__main__":
 
     curA.close()
     cnx.close()
-    # pool.close()
-    # pool.join()
+    pool.close()
+    pool.join()
