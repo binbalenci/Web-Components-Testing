@@ -148,6 +148,9 @@ def check_element(package):
         print("Already checked!")
 
 if __name__ == "__main__":
+    # Get the start time
+    starttime = time.time()
+
     # Make a connection to database
     cnx = mysql.connector.connect(**config)
 
@@ -155,32 +158,37 @@ if __name__ == "__main__":
     curA = cnx.cursor(buffered=True, dictionary=True)
 
     # Get the begin and end id from Arguments
+    # Make a if else condition for end_id so that if user only enters one number, it checks only that id
     begin_id = sys.argv[1]
-    end_id = sys.argv[2]
+    end_id = sys.argv[2] if len(sys.argv) >= 3 else begin_id
 
     query = ("SELECT * FROM registry WHERE checked IS NULL AND id BETWEEN {0} AND {1}".format(begin_id, end_id))
     # query = ("SELECT * FROM registry WHERE id=15")
 
     curA.execute(query)
 
+    # Get number of rows from SELECT
+    num_rows = curA.rowcount
+
     # Print the number of rows to check
-    print("There are a total of {0} urls to check.".format(curA.rowcount))
+    print("There are a total of {0} urls to check.".format(num_rows))
 
     # Create a pool with 8 processors
     pool = mp.Pool(processes=4)
-
-    # Get the start time
-    starttime = time.time()
 
     for package in curA:
         # check_element(package)
         pool.apply(check_element, args = (package, ))
 
+    # Get the running time of the function
     elapsedtime = time.time() - starttime
 
-    print("Times taken: {0} seconds".format(elapsedtime))
+    print("Times taken: {0} seconds for {1} urls".format(elapsedtime, num_rows))
 
+    # Closing the cursor
     curA.close()
+    # Closing DB connection
     cnx.close()
+    # Closing the pool
     pool.close()
     pool.join()
