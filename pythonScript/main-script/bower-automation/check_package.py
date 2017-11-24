@@ -147,6 +147,7 @@ def check_element(package):
     else:
         print("Already checked!")
 
+# Running the main function here
 if __name__ == "__main__":
     # Get the start time
     starttime = time.time()
@@ -163,7 +164,6 @@ if __name__ == "__main__":
     end_id = sys.argv[2] if len(sys.argv) >= 3 else begin_id
 
     query = ("SELECT * FROM registry WHERE checked IS NULL AND id BETWEEN {0} AND {1}".format(begin_id, end_id))
-    # query = ("SELECT * FROM registry WHERE id=15")
 
     curA.execute(query)
 
