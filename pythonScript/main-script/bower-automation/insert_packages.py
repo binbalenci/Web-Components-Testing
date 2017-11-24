@@ -66,9 +66,13 @@ for package in packages:
 
     # Add ignore so that mysql will ignore execution errors if there is a duplicate package_id
     add_package = (
-        "INSERT IGNORE INTO registry "
+        "INSERT INTO registry "
         "(repo, owner, url, is_github, package_id) "
-        "VALUES (%(repo)s, %(owner)s, %(url)s, %(is_github)s, %(package_id)s)"
+        "SELECT %(repo)s, %(owner)s, %(url)s, %(is_github)s, %(package_id)s "
+        "WHERE NOT EXISTS "
+        "("
+        "SELECT package_id FROM registry WHERE package_id = %(package_id)s"
+        ")"
     )
 
     data_package = {
@@ -78,6 +82,9 @@ for package in packages:
         'is_github': is_github,
         'package_id': package_id
     }
+
+    # print(add_package, "", data_package)
+    # break
 
     try:
         cursor.execute(add_package, data_package)
