@@ -2,11 +2,16 @@
 
 from __future__ import print_function
 import pandas as pd
-import urllib
+from urllib.request import urlopen
+from urllib.error import URLError, HTTPError
+from socket import error as SocketError
 import simplejson
 import datetime
 import sys
 import re
+
+# Converted Polymer 2 number
+num_converted = 0
 
 # Getting today date in format (dd-mm-yy)
 today = datetime.date.today().strftime('%d-%m-%y')
@@ -43,34 +48,45 @@ for index, row in df.iterrows():
 	# This part we're checking if there are any valid JSON for the components. Since the component might already be removed from webcomponents.org
 	try:
 		# Open the URL
-		response = urllib.urlopen(metadataURL)
+		response = urlopen(metadataURL)
 
 		# Load JSON
 		jsonData = simplejson.loads(response.read())
 	except simplejson.scanner.JSONDecodeError:
 		print('No valid JSON!')
 		continue
+	# Check if the link is reachable
+	except HTTPError as e:
+		print(e.code)
+		print(e.read)
+		continue
+	except SocketError as e:
+		print("Socket Error")
+		print(e)
 
 	# Checking JSON children if there are version of polymer available in JSON data
 	# Also get the version from JSON to guarantee it's the latest version
-	if 'bower' in jsonData:
-		if 'dependencies' in jsonData['bower']:
-				if 'polymer' in jsonData['bower']['dependencies']:
-					polymerVer = jsonData['bower']['dependencies']['polymer']
-					if re.search(polymer2Regex, polymerVer):
-						if 'version' in jsonData:
-							f.write(',{0},,{1},{2}\n'.format(row['repo'],row['owner'], jsonData['version']))
-						else:
-							continue
-						p2 = True
-					else:
-						continue
+
+	try:
+		if 'polymer' in jsonData['bower']['dependencies']:
+			polymerVer = jsonData['bower']['dependencies']['polymer']
+			if re.search(polymer2Regex, polymerVer):
+				if 'version' in jsonData:
+					f.write(',{0},,{1},{2}\n'.format(row['repo'],row['owner'], jsonData['version']))
 				else:
 					continue
+				p2 = True
+			else:
+				continue
 		else:
 			continue
-	else:
+	except Exception as e:
+		print(e.code)
+		print(e.read)
 		continue
 
 	if p2:
-		print(polymerVer)
+		num_converted += 1
+		print("Polymer version: ", polymerVer)
+
+print("Number of Polymer 2 converted: {0}".format(num_converted))
