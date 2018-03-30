@@ -1,3 +1,6 @@
+# Python 3.6
+# Purpose: This file will check if the repo is a web-component and if it's a polymer element
+
 from datetime import datetime
 from socket import error as SocketError
 import mysql.connector
@@ -174,7 +177,7 @@ if __name__ == "__main__":
     print("There are a total of {0} urls to check.".format(num_rows))
 
     # Create a pool with 8 processors
-    pool = mp.Pool(processes=4)
+    pool = mp.Pool(processes=8)
 
     for package in curA:
         # check_element(package)
