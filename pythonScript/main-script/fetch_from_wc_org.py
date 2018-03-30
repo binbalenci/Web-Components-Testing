@@ -46,7 +46,8 @@ except OSError as e:
     if e.errno != errno.EEXIST:
         raise
 
-while nextCursor is not None:
+# while nextCursor is not None:
+while counter <= 6:
     #Keep track of progress
     print("{0} {1}\n".format(counter, nextCursor))
 
@@ -65,6 +66,7 @@ while nextCursor is not None:
         json_data.pop('count', None)
         # Export to file
         f.write(simplejson.dumps(json_data['results'], ensure_ascii=False))
+        f.close()
 
     # Omit the False: part
     nextCursorValue = nextCursor[6:]
@@ -103,5 +105,5 @@ elementsCSV_path = '/Users/nammeo/Desktop/Vaadin/Projects/web-components-testing
 # Q - status (I will explain this below);
 # R - source (the source of element which I use for importing it online);
 # S - bowerjson (the URL to raw bower.json file, have to remove the “.” in the name since it messes with Sami integration code)
-frame.to_csv('{0}/allElements_{1}.csv'.format(elementsCSV_path, today), index=True, columns=[
-    'repo', 'description', 'owner', 'version', 'wc_url', 'updated_at', 'stars', 'forks', 'screenshot_url', 'samplecode_url', 'supported_browsers', 'rating', 'comment', 'external', 'polymer', 'status', 'source', 'bowerjson'])
+frame.to_csv('{0}/allElements_{1}.csv'.format(elementsCSV_path, today), index=False, columns=[
+    'repo', 'description', 'owner', 'updated_at', 'version', 'tested_versions', 'wc_url', 'stars', 'forks', 'screenshot_url', 'samplecode_url', 'supported_browsers', 'rating', 'comment', 'external', 'polymer', 'tested', 'included', 'source', 'bowerjson'])
