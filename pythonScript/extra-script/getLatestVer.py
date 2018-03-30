@@ -2,13 +2,12 @@
 # Purpose: to get the latest version of the component imported for correct links to bowerjson and demo file
 # this piece of code is only to update the already-imported version. For future integration, things should be done in JSONtoCSV.py
 
-from __future__ import print_function
 import pandas as pd
-import urllib
+from urllib.request import urlopen
 import simplejson
 import sys
 
-df = pd.read_csv(sys.argv[1])
+df = pd.read_csv(sys.argv[1], converters={'index': str, 'stars': str, 'forks': str, 'polymer' : str})
 
 print('There is a total of %d elements to check' % (len(df)))
 
@@ -22,7 +21,7 @@ for x in range(0, len(df)):
     currentVer = df.loc[:, 'version'][x]
 
     # Skip already read elements (in case errno54: Connection reset by peer)
-    #if x < 170: continue
+    # if x < 170: continue
 
     # To keep track the progress
     startmessage = '{2} {0} {1}'.format(df.loc[:, 'repo'][x], df.loc[:, 'owner'][x], x)
@@ -34,7 +33,7 @@ for x in range(0, len(df)):
 
     try:
         # Open the URL
-        response = urllib.urlopen(metadataURL)
+        response = urlopen(metadataURL)
 
         # Load JSON
         jsonData = simplejson.loads(response.read())
@@ -64,4 +63,4 @@ for x in range(0, len(df)):
         endmessage = 'No version detected!'
         print(endmessage.rjust(50, '-'))
 
-    df.to_csv('../generated-files/updated.csv', index=False, sep=',')
+    df.to_csv('/Users/nammeo/Desktop/Vaadin/Projects/web-components-testing/generated-files/updated.csv', index=False, sep=',')
